@@ -1,7 +1,35 @@
 const Conversations = require('../models/conversations.models');
 const Participants = require('../models/participants.models');
+const Users = require('../models/users.models')
 
 const uuid = require('uuid')
+
+const findAllConversation = async () => {
+    const data = await Conversations.findAll({
+        include: {
+            model: Participants,
+            include: {
+                model: Users
+            }
+        }
+    })
+    return data
+}
+
+const findConversationById = async (id) => {
+    const data = await Conversations.findOne({
+        where: {
+            id: id
+        },
+        include: {
+            model: Participants,
+            include: {
+                model: Users
+            }
+        }
+    })
+    return data
+}
 
 const createConvesation = async (obj) => {
     const newConversation = await Conversations.create({
@@ -28,4 +56,32 @@ const createConvesation = async (obj) => {
         participant1,
         participant2
     }
+}
+
+const updateConversation = async (id, obj) => {
+    const data = await Conversations.update(obj, {
+        where: {
+            id: id
+        }
+    })
+
+    return data[0]
+}
+
+const removeConversation = async (id) => {
+    const data = await Conversations.destroy({
+        where: {
+            id: id
+        }
+    })
+
+    return data
+}
+
+module.exports = {
+    findAllConversation,
+    findConversationById,
+    createConvesation,
+    updateConversation,
+    removeConversation
 }
